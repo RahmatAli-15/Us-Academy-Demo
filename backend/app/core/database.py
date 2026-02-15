@@ -4,9 +4,15 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from app.core.config import settings
 
+# Render/managed providers may provide postgres:// URLs.
+# SQLAlchemy expects postgresql:// for the psycopg2 dialect.
+database_url = settings.DATABASE_URL
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+
 # Create database engine
 engine = create_engine(
-    settings.DATABASE_URL,
+    database_url,
     echo=False,  # Set to True for SQL query logging
 )
 

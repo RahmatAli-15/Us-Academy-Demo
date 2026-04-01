@@ -9,13 +9,13 @@ from app.models import Attendance, Student
 from app.enums.attendance_enum import AttendanceStatus
 
 
-def get_students_for_attendance(db: Session, class_: int) -> List[Student]:
+def get_students_for_attendance(db: Session, class_: str) -> List[Student]:
     """
     Get all students in a class for attendance marking.
     
     Args:
         db: Database session
-        class_: Class number (1-10)
+        class_: Class label
         
     Returns:
         List of Student objects
@@ -26,7 +26,7 @@ def get_students_for_attendance(db: Session, class_: int) -> List[Student]:
 def mark_attendance(
     db: Session,
     student_id: int,
-    class_: int,
+    class_: str,
     attendance_date: date,
     status: AttendanceStatus
 ) -> Optional[Attendance]:
@@ -38,7 +38,7 @@ def mark_attendance(
     Args:
         db: Database session
         student_id: Student database ID
-        class_: Class number
+        class_: Class label
         attendance_date: Date of attendance
         status: Attendance status enum
         
@@ -78,7 +78,7 @@ def mark_attendance(
 
 def mark_attendance_bulk(
     db: Session,
-    class_: int,
+    class_: str,
     attendance_date: date,
     attendances_data: List[dict]
 ) -> dict:
@@ -87,7 +87,7 @@ def mark_attendance_bulk(
     
     Args:
         db: Database session
-        class_: Class number
+        class_: Class label
         attendance_date: Date of attendance
         attendances_data: List of dicts with student_id and status
         

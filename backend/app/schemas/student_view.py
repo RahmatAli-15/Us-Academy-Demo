@@ -5,6 +5,7 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from app.enums.attendance_enum import AttendanceStatus
+from app.enums.class_enum import ClassEnum
 from app.enums.subject_enum import SubjectEnum
 
 
@@ -13,10 +14,13 @@ class StudentProfileResponse(BaseModel):
     id: int
     student_id: str
     name: str
-    class_: int = Field(..., alias="class")
+    class_: ClassEnum = Field(..., alias="class")
     dob: date
+    email: Optional[str]
     phone: Optional[str]
     address: Optional[str]
+    profile_photo_path: Optional[str]
+    profile_photo_url: Optional[str]
     created_at: datetime
 
     class Config:

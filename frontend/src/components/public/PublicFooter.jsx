@@ -15,15 +15,15 @@ const PublicFooter = () => {
           <div className="space-y-4 text-sm">
             <div className="flex items-start gap-3">
               <MapPin size={18} className="mt-0.5 text-[#C6A75E]" />
-              <p>24 Imperial Avenue, Greenwood Estate, New Delhi 110018</p>
+              <p>Sihali Jageer, Katai Road, Sihali Jageer 244241</p>
             </div>
             <div className="flex items-center gap-3">
               <Phone size={18} className="text-[#C6A75E]" />
-              <p>+91 11 4256 9800</p>
+              <p>+91 9659000114</p>
             </div>
             <div className="flex items-center gap-3">
               <Mail size={18} className="text-[#C6A75E]" />
-              <p>admissions@usacademy.edu.in</p>
+              <p>Usacademyofeducation@gmail.com</p>
             </div>
           </div>
           <div>

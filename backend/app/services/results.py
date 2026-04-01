@@ -10,19 +10,17 @@ from app.enums.subject_enum import SubjectEnum
 def create_result(
     db: Session,
     student_id: int,
-    class_: Optional[int],
+    class_: Optional[str],
     exam_type: str,
     marks: Dict[str, float]
 ) -> Optional[List[Result]]:
     """
-    Create result records for a student across all 7 subjects.
-    
-    Prevents duplicate entries (one subject per exam_type per student).
+    Create or update result records for a student across all submitted subjects.
     
     Args:
         db: Database session
         student_id: Student database ID
-        class_: Class number (1-10), optional (derived from student if missing)
+        class_: Class label, optional (derived from student if missing)
         exam_type: Type of exam (e.g., Midterm, Final)
         marks: Dict of subject->marks
         
@@ -43,7 +41,6 @@ def create_result(
         for subject_name, subject_marks in marks.items():
             subject = SubjectEnum(str(subject_name).upper())
             
-            # Check if this subject already exists for this exam_type
             existing = db.query(Result).filter(
                 Result.student_id == student_id,
                 Result.class_ == resolved_class,
@@ -52,7 +49,8 @@ def create_result(
             ).first()
             
             if existing:
-                # Skip or update (we'll skip to prevent duplicates)
+                existing.marks = subject_marks
+                created_results.append(existing)
                 continue
             
             new_result = Result(
@@ -107,13 +105,13 @@ def get_student_results(db: Session, student_id: int) -> List[Result]:
     ).order_by(Result.exam_type, Result.subject).all()
 
 
-def get_class_results(db: Session, class_: int, exam_type: Optional[str] = None) -> List[Result]:
+def get_class_results(db: Session, class_: str, exam_type: Optional[str] = None) -> List[Result]:
     """
     Get results for all students in a class.
     
     Args:
         db: Database session
-        class_: Class number (1-10)
+        class_: Class label
         exam_type: Optional filter by exam type
         
     Returns:

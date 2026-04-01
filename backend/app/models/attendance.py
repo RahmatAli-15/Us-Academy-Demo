@@ -14,7 +14,7 @@ class Attendance(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     student_id = Column(Integer, ForeignKey("students.id"), nullable=False, index=True)
-    class_ = Column(Integer, nullable=False)  # Maps to ClassEnum (1-10)
+    class_ = Column(String(20), nullable=False)
     date = Column(Date, default=datetime.utcnow, nullable=False, index=True)
     status = Column(
         Enum(AttendanceStatus),

@@ -3,14 +3,7 @@ import Reveal from '../../components/public/Reveal'
 const Contact = () => {
   return (
     <div className="bg-[#F5F3EF]">
-      <section className="bg-[#0B1E3F] py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <p className="text-sm uppercase tracking-[0.24em] text-[#C6A75E]">Contact</p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold text-white sm:text-5xl">Start Your Admission Conversation</h1>
-          </Reveal>
-        </div>
-      </section>
+      
 
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-8 lg:grid-cols-2">
@@ -54,17 +47,28 @@ const Contact = () => {
               <div className="rounded-3xl bg-white p-8 shadow-sm">
                 <h3 className="text-xl font-semibold text-[#0B1E3F]">Contact Details</h3>
                 <div className="mt-5 space-y-3 text-sm text-[#374151]">
-                  <p><span className="font-semibold">Address:</span> 24 Imperial Avenue, Greenwood Estate, New Delhi 110018</p>
-                  <p><span className="font-semibold">Phone:</span> +91 11 4256 9800</p>
-                  <p><span className="font-semibold">Email:</span> admissions@usacademy.edu.in</p>
+                  <p><span className="font-semibold">Address:</span> Sihali Jageer, Katai Road, Sihali Jageer 244241</p>
+                  <p><span className="font-semibold">Phone:</span> +91 9659000114</p>
+                  <p><span className="font-semibold">Email:</span> Usacademyofeducation@gmail.com</p>
                   <p><span className="font-semibold">Office Hours:</span> Monday - Saturday, 8:00 AM - 4:00 PM</p>
                 </div>
               </div>
               <div className="rounded-3xl bg-white p-3 shadow-sm">
-                <div className="flex h-[300px] items-center justify-center rounded-2xl border-2 border-dashed border-[#d6ccb5] bg-[#F5F3EF] text-sm text-[#6b7280]">
-                  Google Map Placeholder
-                </div>
-              </div>
+  <div className="h-[300px] rounded-2xl overflow-hidden border-2 border-dashed border-[#d6ccb5]">
+    
+    <iframe
+      src="https://www.google.com/maps?q=Sihali+Jageer+Katai+Road+Sihali+Jageer+244241&output=embed"
+      width="100%"
+      height="100%"
+      style={{ border: 0 }}
+      allowFullScreen=""
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+      className="rounded-2xl"
+    ></iframe>
+
+  </div>
+</div>
             </div>
           </Reveal>
         </div>

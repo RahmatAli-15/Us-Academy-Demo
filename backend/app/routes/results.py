@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_admin
+from app.enums.class_enum import PRE_PRIMARY_CLASS_LABELS, is_valid_class_label
 from app.models import Student
 from app.enums.subject_enum import SubjectEnum
 from app.schemas.result import (
@@ -24,6 +25,35 @@ from app.services.results import (
 )
 
 router = APIRouter(prefix="/admin/results", tags=["admin-results"])
+
+PRE_PRIMARY_SUBJECTS = {
+    "ENGLISH",
+    "HINDI",
+    "MATHS",
+    "URDU",
+    "GK",
+    "PT",
+    "ART",
+}
+
+CLASS_1_TO_10_SUBJECTS = {
+    "ENGLISH",
+    "ENGLISH_GRAMMAR",
+    "HINDI",
+    "HINDI_GRAMMAR",
+    "MATHS",
+    "EVS_SCIENCE",
+    "URDU",
+    "COMPUTER",
+    "GK",
+    "MS_SST",
+    "ART",
+}
+
+
+def _required_subjects_for_class(class_value: str) -> set[str]:
+    """Resolve the subject set based on class group."""
+    return PRE_PRIMARY_SUBJECTS if str(class_value) in PRE_PRIMARY_CLASS_LABELS else CLASS_1_TO_10_SUBJECTS
 
 
 @router.post("", status_code=status.HTTP_201_CREATED)
@@ -47,29 +77,21 @@ async def add_result(
     
     Only admin can access.
     """
-    class_value = request.student_class
+    class_value = request.student_class.value
 
-    if class_value is not None and (class_value < 1 or class_value > 10):
+    if class_value is not None and not is_valid_class_label(class_value):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Class must be between 1 and 10"
+            detail="Invalid class"
         )
 
-    required_subjects = {
-        "HINDI",
-        "ENGLISH",
-        "MATHS",
-        "SCIENCE",
-        "SOCIAL_STUDIES",
-        "PHYSICAL_EDUCATION",
-        "ART",
-    }
+    required_subjects = _required_subjects_for_class(class_value)
 
     incoming_subjects = {str(subject).upper() for subject in request.marks.keys()}
     if incoming_subjects != required_subjects:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Marks must include exactly: HINDI, ENGLISH, MATHS, SCIENCE, SOCIAL_STUDIES, PHYSICAL_EDUCATION, ART"
+            detail=f"Marks must include exactly: {', '.join(sorted(required_subjects))}"
         )
 
     normalized_marks = {}
@@ -100,7 +122,7 @@ async def add_result(
             detail=f"Student with ID {request.student_id} not found"
         )
 
-    if str(student.class_) != str(request.student_class):
+    if str(student.class_) != str(class_value):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Student class mismatch"
@@ -175,7 +197,7 @@ async def get_student_results_list(
 
 @router.get("/class/{class_}", response_model=list[ResultResponse])
 async def get_class_results_list(
-    class_: int,
+    class_: str,
     exam_type: Optional[str] = None,
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_admin)
@@ -187,10 +209,10 @@ async def get_class_results_list(
     
     Only admin can access.
     """
-    if class_ < 1 or class_ > 10:
+    if not is_valid_class_label(class_):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Class must be between 1 and 10"
+            detail="Invalid class"
         )
     
     results = get_class_results(db, class_, exam_type)

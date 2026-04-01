@@ -1,14 +1,15 @@
 import Reveal from '../../components/public/Reveal'
 
 const classBands = [
-  { level: 'Classes 1-2', focus: 'Foundational literacy, numeracy, and joyful discovery-based learning.' },
-  { level: 'Classes 3-5', focus: 'Concept mastery, language fluency, and creativity through projects.' },
+  { level: 'Classes Nursery to UKG', focus: 'Foundational literacy, numeracy, and joyful discovery-based learning.' },
+  { level: 'Classes 1-5', focus: 'Concept mastery, language fluency, and creativity through projects.' },
   { level: 'Classes 6-8', focus: 'Analytical thinking, STEM immersion, and interdisciplinary exploration.' },
   { level: 'Classes 9-10', focus: 'Board exam readiness, advanced subject depth, and career orientation.' },
 ]
 
 const subjects = [
-  'English Language & Literature',
+  'English Language',
+  'English Literature',
   'Hindi',
   'Mathematics',
   'Science',
@@ -16,23 +17,19 @@ const subjects = [
   'Computer Science',
   'Art & Design',
   'Physical Education',
+  'Urdu',
+  'Sanskrit',
+  'Home Science'
 ]
 
 const Academics = () => {
   return (
     <div className="bg-[#F5F3EF]">
-      <section className="bg-[#0B1E3F] py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <p className="text-sm uppercase tracking-[0.24em] text-[#C6A75E]">Academics</p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold text-white sm:text-5xl">Rigorous Learning with Real-World Relevance</h1>
-          </Reveal>
-        </div>
-      </section>
+      
 
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <Reveal>
-          <h2 className="text-3xl font-semibold text-[#0B1E3F]">Class 1 to 10 Overview</h2>
+          <h2 className="text-3xl font-semibold text-[#0B1E3F]">Class Nursery to 10 Overview</h2>
           <p className="mt-4 max-w-3xl leading-8 text-[#374151]">
             Our academic framework is designed to progress from foundational competencies to higher-order reasoning, ensuring students are prepared for board
             success and lifelong learning.

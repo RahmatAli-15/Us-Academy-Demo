@@ -1,8 +1,8 @@
 import Reveal from '../../components/public/Reveal'
-
+import homepage from '../../public/images/homepage.jpeg'
 const leaders = [
   {
-    name: 'Dr. Kavita Anand',
+    name: 'Aamir khan',
     role: 'Chairperson',
     bio: 'An education reform advocate with 20+ years of strategic leadership in progressive schooling.',
   },
@@ -21,19 +21,12 @@ const leaders = [
 const About = () => {
   return (
     <div className="bg-[#F5F3EF]">
-      <section className="bg-[#0B1E3F] py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <p className="text-sm uppercase tracking-[0.24em] text-[#C6A75E]">About Us</p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold text-white sm:text-5xl">A Legacy of Education, Character, and Leadership</h1>
-          </Reveal>
-        </div>
-      </section>
+      
 
       <section className="mx-auto grid max-w-7xl gap-12 px-6 py-20 lg:grid-cols-2 lg:items-center lg:px-8">
         <Reveal>
           <img
-            src="https://images.unsplash.com/photo-1607237138185-eedd9c632b0b?auto=format&fit=crop&w=1200&q=80"
+            src={homepage}
             alt="School history"
             className="h-[420px] w-full rounded-3xl object-cover shadow-2xl"
           />
@@ -41,7 +34,7 @@ const About = () => {
         <Reveal delay={120}>
           <h2 className="text-3xl font-semibold text-[#0B1E3F]">Our History</h2>
           <p className="mt-6 leading-8 text-[#374151]">
-            Established in 2001, US Academy began with a single vision: to create an institution where academic distinction,
+            Established in 2020, US Academy began with a single vision: to create an institution where academic distinction,
             ethics, and global outlook coexist. Over the years, we have evolved into a trusted educational community known for top board outcomes,
             innovation-led pedagogy, and strong student wellbeing frameworks.
           </p>
@@ -60,7 +53,7 @@ const About = () => {
                 “At US Academy, education is not limited to the classroom. We nurture intellect, integrity, and empathy so every student can lead
                 responsibly in a rapidly evolving world.”
               </p>
-              <p className="mt-6 text-sm font-semibold text-[#0B1E3F]">Dr. Kavita Anand, Chairperson</p>
+              <p className="mt-6 text-sm font-semibold text-[#0B1E3F]">Aamir khan, Chairperson</p>
             </div>
           </Reveal>
         </div>

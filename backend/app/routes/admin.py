@@ -1,12 +1,15 @@
 """Admin management routes"""
 import os
+import uuid
+from pathlib import Path
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_admin
+from app.enums.class_enum import is_valid_class_label
 from app.schemas.student import StudentCreate, StudentResponse, StudentUpdate
 from app.services.students import (
     create_student,
@@ -18,6 +21,44 @@ from app.services.students import (
 )
 
 router = APIRouter(prefix="/admin/students", tags=["admin"])
+STUDENT_PHOTO_DIR = Path(__file__).resolve().parents[2] / "uploads" / "students"
+STUDENT_PHOTO_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def _normalize_student_payload(data: dict) -> dict:
+    """Convert blank strings from forms into nulls for optional fields."""
+    required_fields = {"name", "class_", "dob", "aadhaar_number"}
+    normalized = {}
+
+    for key, value in data.items():
+        if hasattr(value, "value"):
+            value = value.value
+        if isinstance(value, str):
+            value = value.strip()
+            if value == "" and key not in required_fields:
+                normalized[key] = None
+                continue
+        normalized[key] = value
+
+    return normalized
+
+
+def _save_student_photo(photo: UploadFile) -> str:
+    """Persist an uploaded student profile photo and return its relative path."""
+    extension = Path(photo.filename or "").suffix.lower()
+    if extension not in {".jpg", ".jpeg", ".png", ".webp"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Profile photo must be JPG, PNG, or WEBP"
+        )
+
+    filename = f"{uuid.uuid4().hex}{extension}"
+    destination = STUDENT_PHOTO_DIR / filename
+
+    with destination.open("wb") as output:
+        output.write(photo.file.read())
+
+    return f"uploads/students/{filename}"
 
 
 @router.get("", response_model=list[StudentResponse])
@@ -46,7 +87,7 @@ async def add_student(
     student_id is auto-generated based on class.
     """
     # Convert student_data to dict for service
-    student_dict = student_data.model_dump(by_alias=False)
+    student_dict = _normalize_student_payload(student_data.model_dump(by_alias=False))
 
     try:
         new_student = create_student(db, student_dict)
@@ -118,7 +159,7 @@ async def get_student_by_id(
 
 @router.get("/class/{class_}", response_model=list[StudentResponse])
 async def get_students_in_class(
-    class_: int,
+    class_: str,
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_admin)
 ):
@@ -126,12 +167,12 @@ async def get_students_in_class(
     Get all students in a specific class.
     
     Only admin can access this endpoint.
-    Class must be between 1-10.
+    Class must be a supported label.
     """
-    if class_ < 1 or class_ > 10:
+    if not is_valid_class_label(class_):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Class must be between 1 and 10"
+            detail="Invalid class"
         )
     
     students = get_students_by_class(db, class_)
@@ -153,11 +194,9 @@ async def update_student_info(
     Only provided fields will be updated.
     """
     # Convert to dict and remove None values
-    update_dict = student_data.model_dump(exclude_unset=True, by_alias=False)
-    
-    # Rename class_ if present
-    if "class" in update_dict:
-        update_dict["class_"] = update_dict.pop("class")
+    update_dict = _normalize_student_payload(
+        student_data.model_dump(exclude_unset=True, by_alias=False)
+    )
     
     updated_student = update_student(db, student_id, update_dict)
     
@@ -167,6 +206,35 @@ async def update_student_info(
             detail="Student not found"
         )
     
+    return updated_student
+
+
+@router.post("/{student_id}/photo", response_model=StudentResponse)
+async def upload_student_photo(
+    student_id: int,
+    photo: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(require_admin)
+):
+    """Upload or replace a student's profile photo."""
+    student = get_student(db, student_id)
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Student not found"
+        )
+
+    relative_path = _save_student_photo(photo)
+
+    old_photo_path = student.profile_photo_path
+    updated_student = update_student(db, student_id, {"profile_photo_path": relative_path})
+
+    if old_photo_path:
+        old_file = Path(__file__).resolve().parents[2] / old_photo_path
+        if old_file.exists():
+            old_file.unlink(missing_ok=True)
+
     return updated_student
 
 

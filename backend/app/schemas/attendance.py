@@ -5,6 +5,7 @@ from typing import List
 from pydantic import BaseModel, Field
 
 from app.enums.attendance_enum import AttendanceStatus
+from app.enums.class_enum import ClassEnum
 
 
 class AttendanceMarkRequest(BaseModel):
@@ -15,7 +16,7 @@ class AttendanceMarkRequest(BaseModel):
 
 class AttendanceMarkBulkRequest(BaseModel):
     """Mark attendance for multiple students"""
-    class_: int = Field(..., ge=1, le=10, alias="class")
+    class_: ClassEnum = Field(..., alias="class")
     date: date
     attendances: List[AttendanceMarkRequest]
 
@@ -27,7 +28,7 @@ class AttendanceResponse(BaseModel):
     """Attendance response"""
     id: int
     student_id: int
-    class_: int = Field(..., alias="class")
+    class_: ClassEnum = Field(..., alias="class")
     date: date
     status: AttendanceStatus
 
@@ -41,7 +42,7 @@ class StudentAttendanceResponse(BaseModel):
     id: int
     student_id: str
     name: str
-    class_: int = Field(..., alias="class")
+    class_: ClassEnum = Field(..., alias="class")
 
     class Config:
         populate_by_name = True

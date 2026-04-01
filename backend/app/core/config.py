@@ -21,7 +21,9 @@ class Settings(BaseSettings):
         "http://localhost:5173,"
         "http://127.0.0.1:5173"
     )
-    CORS_ALLOW_ORIGIN_REGEX: str = r"https://.*\.onrender\.com"
+    CORS_ALLOW_ORIGIN_REGEX: str = (
+        r"https://.*\.(onrender\.com|ondigitalocean\.app)"
+    )
     
     class Config:
         env_file = ".env"

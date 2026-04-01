@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { BookOpen, Bus, Building2, Laptop, Microscope, Trophy, Users, Library, Dumbbell, FileText } from 'lucide-react'
 import api from '../../api/axios'
 import Reveal from '../../components/public/Reveal'
+import homepage from '../../public/images/homepage.jpeg'
 
 const excellenceCards = [
   { title: 'Modern Classrooms', icon: Building2, text: 'Technology-enabled classrooms crafted for collaborative, inquiry-based learning.' },
@@ -12,9 +13,9 @@ const excellenceCards = [
 ]
 
 const stats = [
-  { label: 'Students', value: '1500+' },
-  { label: 'Faculty', value: '120+' },
-  { label: 'Years of Excellence', value: '25+' },
+  { label: 'Students', value: '500+' },
+  { label: 'Faculty', value: '25+' },
+  { label: 'Years of Excellence', value: '10+' },
   { label: 'Board Results', value: '100%' },
 ]
 
@@ -24,17 +25,17 @@ const facilities = [
   { title: 'Library', icon: Library },
   { title: 'Transport', icon: Bus },
   { title: 'Auditorium', icon: Trophy },
-  { title: 'Hostel', icon: Building2 },
+  { title: 'Computer Lab', icon: Laptop },
 ]
 
 const testimonials = [
   {
-    name: 'Radhika Mehra',
+    name: 'Ruskar khan',
     role: 'Parent of Grade 8 Student',
     quote: 'US Academy has given my daughter confidence, discipline, and curiosity. The faculty quality is exceptional.',
   },
   {
-    name: 'Arjun Sethi',
+    name: 'Arjun kumar',
     role: 'Parent of Grade 5 Student',
     quote: 'The learning environment is world-class, and communication with parents is transparent and proactive.',
   },
@@ -70,7 +71,7 @@ const Home = () => {
         className="relative min-h-[88vh] bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage:
-            "linear-gradient(110deg, rgba(11,30,63,0.86), rgba(11,30,63,0.65)), url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1800&q=80')",
+            `linear-gradient(110deg, rgba(11,30,63,0.86), rgba(11,30,63,0.65)), url(${homepage})`,
         }}
       >
         <div className="mx-auto flex min-h-[88vh] max-w-7xl items-center px-6 pb-14 pt-24 lg:px-8">

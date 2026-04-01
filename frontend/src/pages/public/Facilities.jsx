@@ -32,24 +32,17 @@ const facilities = [
     description: 'State-of-the-art auditorium for assemblies, performances, and conferences.',
   },
   {
-    title: 'Hostel',
+    title: 'Computer Lab',
     image:
-      'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=900&q=80',
-    description: 'Comfortable residential facilities with pastoral care and healthy dining.',
+      'https://media.istockphoto.com/id/2240807455/photo/red-plastic-chair-in-school-computer-lab.webp?a=1&b=1&s=612x612&w=0&k=20&c=bkHsnBIpAVW7sBOCqQgNZ_1I4MkxFPOTwKju21BglAk=',
+    description: 'Modern computer lab equipped with the latest technology for digital learning.',
   },
 ]
 
 const Facilities = () => {
   return (
     <div className="bg-[#F5F3EF]">
-      <section className="bg-[#0B1E3F] py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <p className="text-sm uppercase tracking-[0.24em] text-[#C6A75E]">Facilities</p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold text-white sm:text-5xl">Designed for Learning, Wellness, and Growth</h1>
-          </Reveal>
-        </div>
-      </section>
+      
 
       <section className="mx-auto max-w-7xl px-6 py-20 lg:px-8">
         <div className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">

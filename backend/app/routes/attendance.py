@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_admin
+from app.enums.class_enum import is_valid_class_label
 from app.schemas.attendance import (
     AttendanceMarkBulkRequest,
     AttendanceResponse,
@@ -22,7 +23,7 @@ router = APIRouter(prefix="/admin/attendance", tags=["admin-attendance"])
 
 @router.get("/students/{class_}/{date}", response_model=list[StudentAttendanceResponse])
 async def get_class_students_for_attendance(
-    class_: int,
+    class_: str,
     date: date,
     db: Session = Depends(get_db),
     current_user: dict = Depends(require_admin)
@@ -33,10 +34,10 @@ async def get_class_students_for_attendance(
     Returns student list for the admin to mark attendance.
     Only admin can access.
     """
-    if class_ < 1 or class_ > 10:
+    if not is_valid_class_label(class_):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Class must be between 1 and 10"
+            detail="Invalid class"
         )
     
     students = get_students_for_attendance(db, class_)
@@ -65,10 +66,10 @@ async def mark_attendance(
     
     Only admin can access.
     """
-    if request.class_ < 1 or request.class_ > 10:
+    if not is_valid_class_label(request.class_):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Class must be between 1 and 10"
+            detail="Invalid class"
         )
     
     # Convert attendances to dict format
@@ -80,12 +81,12 @@ async def mark_attendance(
         for att in request.attendances
     ]
     
-    result = mark_attendance_bulk(db, request.class_, request.date, attendances_data)
+    result = mark_attendance_bulk(db, request.class_.value, request.date, attendances_data)
     
     return {
         "message": "Attendance marked successfully",
         "date": request.date,
-        "class": request.class_,
+        "class": request.class_.value,
         "success": result["success"],
         "failed": result["failed"],
         "failed_student_ids": result["failed_student_ids"]

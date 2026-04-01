@@ -31,14 +31,7 @@ const Notices = () => {
 
   return (
     <div className="bg-[#F5F3EF]">
-      <section className="bg-[#0B1E3F] py-24">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <Reveal>
-            <p className="text-sm uppercase tracking-[0.24em] text-[#C6A75E]">Notices</p>
-            <h1 className="mt-4 max-w-3xl text-4xl font-semibold text-white sm:text-5xl">Latest Circulars and Announcements</h1>
-          </Reveal>
-        </div>
-      </section>
+      
 
       <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
         <Reveal>

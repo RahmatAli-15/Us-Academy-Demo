@@ -14,7 +14,7 @@ class Result(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     student_id = Column(Integer, ForeignKey("students.id"), nullable=False, index=True)
-    class_ = Column(Integer, nullable=False)  # Maps to ClassEnum (1-10)
+    class_ = Column(String(20), nullable=False)
     subject = Column(Enum(SubjectEnum), nullable=False, index=True)
     marks = Column(Float, nullable=False)
     exam_type = Column(String(50), nullable=False)  # e.g., "Midterm", "Final", "Unit Test"

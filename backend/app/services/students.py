@@ -7,9 +7,10 @@ from sqlalchemy.orm import Session
 from app.models import Student
 
 
-def _extract_roll_number(student_id: str, class_: int) -> Optional[int]:
+def _extract_roll_number(student_id: str, class_: str) -> Optional[int]:
     """Extract numeric roll part from student_id for a class."""
-    prefix = f"STU{class_}"
+    class_token = str(class_).upper().replace(" ", "")
+    prefix = f"STU{class_token}"
 
     if not student_id.startswith(prefix):
         return None
@@ -21,13 +22,13 @@ def _extract_roll_number(student_id: str, class_: int) -> Optional[int]:
     return int(suffix)
 
 
-def _generate_next_student_id(db: Session, class_: int) -> str:
+def _generate_next_student_id(db: Session, class_: str) -> str:
     """
     Generate next student_id for a class in STU{class}{roll:03d} format.
 
     Example:
     - class 1 -> STU1001
-    - class 10 -> STU10001
+    - class Nursery -> STUNURSERY001
     """
     existing_ids = db.query(Student.student_id).filter(
         Student.class_ == class_
@@ -43,7 +44,8 @@ def _generate_next_student_id(db: Session, class_: int) -> str:
 
     # Double-check uniqueness and advance until free (rare race/collision safeguard).
     while True:
-        candidate_id = f"STU{class_}{next_roll:03d}"
+        class_token = str(class_).upper().replace(" ", "")
+        candidate_id = f"STU{class_token}{next_roll:03d}"
         exists = db.query(Student.id).filter(
             Student.student_id == candidate_id
         ).with_for_update().first()
@@ -109,13 +111,13 @@ def get_student(db: Session, student_id: int) -> Optional[Student]:
     return db.query(Student).filter(Student.id == student_id).first()
 
 
-def get_students_by_class(db: Session, class_: int) -> List[Student]:
+def get_students_by_class(db: Session, class_: str) -> List[Student]:
     """
     Get all students in a specific class.
 
     Args:
         db: Database session
-        class_: Class number (1-10)
+        class_: Class label
 
     Returns:
         List of Student objects

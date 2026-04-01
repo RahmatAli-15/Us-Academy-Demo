@@ -34,7 +34,7 @@ api.interceptors.response.use(
       // Token expired or invalid
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      window.location.href = '/login/admin'
+      window.location.href = '/portal-admin-access-ua92'
     }
     return Promise.reject(error)
   }

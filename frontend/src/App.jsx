@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
+import ScrollToTop from './components/ScrollToTop'
 
 // Layouts
 import PublicLayout from './layouts/PublicLayout'
@@ -38,6 +39,7 @@ import StudentPdfs from './pages/student/Pdfs'
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <AuthProvider>
         <Routes>
           {/* Public Routes */}
@@ -51,7 +53,7 @@ function App() {
           </Route>
 
           {/* Auth Routes */}
-          <Route path="/login/admin" element={<AdminLogin />} />
+          <Route path="/portal-admin-access-ua92" element={<AdminLogin />} />
           <Route path="/login/student" element={<StudentLogin />} />
 
           {/* Admin Routes */}

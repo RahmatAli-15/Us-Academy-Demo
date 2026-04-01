@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, Menu, X } from 'lucide-react'
+import { Menu, X } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 
 const navLinks = [
@@ -14,11 +14,9 @@ const navLinks = [
 const PublicNavbar = () => {
   const location = useLocation()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [loginOpen, setLoginOpen] = useState(false)
 
   useEffect(() => {
     setMenuOpen(false)
-    setLoginOpen(false)
   }, [location.pathname])
 
   return (
@@ -30,40 +28,33 @@ const PublicNavbar = () => {
         </Link>
 
         <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 md:flex">
-          {navLinks.map((item) => (
+            {navLinks.map((item) => (
+              <Link
+                key={item.to}
+                to={item.to}
+                className={`text-sm font-medium transition duration-300 ${location.pathname === item.to ? 'text-[#C6A75E]' : 'text-white hover:text-[#C6A75E]'}`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden items-center gap-3 md:flex">
             <Link
-              key={item.to}
-              to={item.to}
-              className={`text-sm font-medium transition duration-300 ${location.pathname === item.to ? 'text-[#C6A75E]' : 'text-white hover:text-[#C6A75E]'}`}
+              to="/login/student"
+              className="rounded-full border border-[#C6A75E] px-5 py-2.5 text-sm font-medium text-white transition duration-300 hover:bg-[#C6A75E] hover:text-[#0B1E3F]"
             >
-              {item.label}
+              Student Login
             </Link>
-          ))}
-        </nav>
+          </div>
 
-        <div className="relative hidden md:block">
           <button
-            onClick={() => setLoginOpen((prev) => !prev)}
-            className="flex items-center gap-2 rounded-full border border-[#C6A75E] px-5 py-2.5 text-sm font-medium text-white transition duration-300 hover:bg-[#C6A75E] hover:text-[#0B1E3F]"
+            onClick={() => setMenuOpen((prev) => !prev)}
+            className="rounded-full border border-[#C6A75E]/50 p-2 text-white md:hidden"
           >
-            Login <ChevronDown size={16} />
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
-          {loginOpen && (
-            <div className="absolute right-0 mt-2 w-44 overflow-hidden rounded-2xl border border-[#C6A75E]/40 bg-[#0B1E3F]/95 shadow-2xl backdrop-blur-lg">
-              <Link to="/login/admin" className="block px-4 py-3 text-sm text-white transition hover:bg-[#C6A75E]/15 hover:text-[#C6A75E]">
-                Admin Login
-              </Link>
-              <Link to="/login/student" className="block px-4 py-3 text-sm text-white transition hover:bg-[#C6A75E]/15 hover:text-[#C6A75E]">
-                Student Login
-              </Link>
-            </div>
-          )}
         </div>
-
-        <button onClick={() => setMenuOpen((prev) => !prev)} className="rounded-full border border-[#C6A75E]/50 p-2 text-white md:hidden">
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-      </div>
 
       {menuOpen && (
         <div className="border-t border-white/10 bg-[#0B1E3F]/95 px-6 pb-6 pt-4 backdrop-blur-lg md:hidden">
@@ -79,10 +70,10 @@ const PublicNavbar = () => {
             ))}
           </div>
           <div className="mt-4 grid gap-2">
-            <Link to="/login/admin" className="rounded-lg bg-[#C6A75E] px-4 py-2 text-center text-sm font-semibold text-[#0B1E3F]">
-              Admin Login
-            </Link>
-            <Link to="/login/student" className="rounded-lg border border-[#C6A75E]/50 px-4 py-2 text-center text-sm font-semibold text-[#F5F3EF]">
+            <Link
+              to="/login/student"
+              className="rounded-lg border border-[#C6A75E]/50 px-4 py-2 text-center text-sm font-semibold text-[#F5F3EF]"
+            >
               Student Login
             </Link>
           </div>

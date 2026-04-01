@@ -137,12 +137,6 @@ const Navbar = ({ onSidebarToggle, sidebarOpen = false }) => {
                   Notices
                 </Link>
                 <button
-                  onClick={() => navigate('/login/admin')}
-                  className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-                >
-                  Admin Login
-                </button>
-                <button
                   onClick={() => navigate('/login/student')}
                   className="rounded bg-green-600 px-4 py-2 text-white hover:bg-green-700"
                 >
@@ -184,15 +178,6 @@ const Navbar = ({ onSidebarToggle, sidebarOpen = false }) => {
               >
                 Notices
               </Link>
-              <button
-                onClick={() => {
-                  navigate('/login/admin')
-                  setIsOpen(false)
-                }}
-                className="w-full rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
-              >
-                Admin Login
-              </button>
               <button
                 onClick={() => {
                   navigate('/login/student')

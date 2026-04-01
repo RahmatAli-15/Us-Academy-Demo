@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { CalendarDays, Mail, MapPin, Phone, ShieldCheck, Sparkles, UserCircle2 } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
+import { AlertTriangle, CalendarDays, CheckCircle2, Lightbulb, Mail, MapPin, Phone, ShieldCheck, Sparkles, Target, TrendingUp, UserCircle2, Wallet } from 'lucide-react'
 import api from '../../api/axios'
 import { formatClassLabel } from '../../constants/classes'
 
@@ -15,17 +15,29 @@ const InfoCard = ({ icon: Icon, label, value }) => (
 
 const Profile = () => {
   const [profile, setProfile] = useState(null)
+  const [attendance, setAttendance] = useState([])
+  const [results, setResults] = useState([])
+  const [fees, setFees] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
   useEffect(() => {
-    loadProfile()
+    loadProfileData()
   }, [])
 
-  const loadProfile = async () => {
+  const loadProfileData = async () => {
     try {
-      const response = await api.get('/student/me')
-      setProfile(response.data)
+      const [profileRes, attendanceRes, resultsRes, feesRes] = await Promise.all([
+        api.get('/student/me'),
+        api.get('/student/attendance'),
+        api.get('/student/results'),
+        api.get('/student/fees'),
+      ])
+
+      setProfile(profileRes.data)
+      setAttendance(attendanceRes.data || [])
+      setResults(resultsRes.data || [])
+      setFees(feesRes.data || [])
       setError('')
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to load profile')
@@ -33,6 +45,96 @@ const Profile = () => {
       setLoading(false)
     }
   }
+
+  const profilePhotoUrl = profile?.profile_photo_url
+    ? `${api.defaults.baseURL}${profile.profile_photo_url}`
+    : null
+  const studentClass = profile?.class_ ?? profile?.class ?? profile?.class_number ?? '-'
+  const attendancePercentage = useMemo(() => {
+    if (!attendance.length) return 0
+    return Math.round((attendance.filter((item) => item.status === 'PRESENT').length / attendance.length) * 100)
+  }, [attendance])
+  const averageMarks = useMemo(() => {
+    if (!results.length) return 0
+    return Math.round(results.reduce((sum, item) => sum + Number(item.marks || 0), 0) / results.length)
+  }, [results])
+  const pendingFees = useMemo(
+    () => fees.reduce((sum, item) => sum + Number(item.due_amount || 0), 0),
+    [fees]
+  )
+  const weakSubjects = useMemo(
+    () => results.filter((item) => Number(item.marks || 0) < 60).map((item) => item.subject),
+    [results]
+  )
+  const strongSubjects = useMemo(
+    () => results.filter((item) => Number(item.marks || 0) >= 80).map((item) => item.subject),
+    [results]
+  )
+  const insights = useMemo(() => {
+    const cards = [
+      {
+        icon: TrendingUp,
+        label: 'Attendance Score',
+        value: `${attendancePercentage}%`,
+        note: attendancePercentage >= 85 ? 'Healthy consistency' : 'Needs better regularity',
+        tone: attendancePercentage >= 85 ? 'text-emerald-600' : 'text-amber-600',
+      },
+      {
+        icon: Target,
+        label: 'Average Marks',
+        value: averageMarks || '0',
+        note: averageMarks >= 75 ? 'Strong academic trend' : 'Scope to improve subject scores',
+        tone: averageMarks >= 75 ? 'text-emerald-600' : 'text-blue-600',
+      },
+      {
+        icon: Wallet,
+        label: 'Pending Fees',
+        value: `Rs ${Number(pendingFees || 0).toLocaleString('en-IN')}`,
+        note: pendingFees > 0 ? 'Payment follow-up needed' : 'No outstanding dues',
+        tone: pendingFees > 0 ? 'text-rose-600' : 'text-emerald-600',
+      },
+    ]
+
+    const recommendations = []
+
+    if (attendancePercentage < 75) {
+      recommendations.push({
+        icon: AlertTriangle,
+        title: 'Improve attendance rhythm',
+        description: 'Try to stay above 75% attendance to keep learning continuity strong.',
+      })
+    } else {
+      recommendations.push({
+        icon: CheckCircle2,
+        title: 'Attendance is on track',
+        description: 'Keep following the same routine to maintain steady classroom presence.',
+      })
+    }
+
+    if (weakSubjects.length > 0) {
+      recommendations.push({
+        icon: Lightbulb,
+        title: 'Focus on weaker subjects',
+        description: `Spend extra revision time on ${weakSubjects.slice(0, 3).join(', ')}${weakSubjects.length > 3 ? ' and more' : ''}.`,
+      })
+    } else if (strongSubjects.length > 0) {
+      recommendations.push({
+        icon: CheckCircle2,
+        title: 'Strong academic areas',
+        description: `You are doing well in ${strongSubjects.slice(0, 3).join(', ')}${strongSubjects.length > 3 ? ' and more' : ''}.`,
+      })
+    }
+
+    if (pendingFees > 0) {
+      recommendations.push({
+        icon: Wallet,
+        title: 'Clear fee balance',
+        description: 'Review your fee details and clear pending dues to keep your account updated.',
+      })
+    }
+
+    return { cards, recommendations }
+  }, [attendancePercentage, averageMarks, pendingFees, strongSubjects, weakSubjects])
 
   if (loading) return <div className="py-10 text-center text-slate-500">Loading profile...</div>
 
@@ -43,11 +145,6 @@ const Profile = () => {
       </div>
     )
   }
-
-  const profilePhotoUrl = profile.profile_photo_url
-    ? `${api.defaults.baseURL}${profile.profile_photo_url}`
-    : null
-  const studentClass = profile.class_ ?? profile.class ?? profile.class_number ?? '-'
 
   return (
     <div className="space-y-8">
@@ -136,6 +233,55 @@ const Profile = () => {
             <InfoCard icon={MapPin} label="Address" value={profile.address || '-'} />
             <InfoCard icon={ShieldCheck} label="Status" value="Active" />
             <InfoCard icon={UserCircle2} label="Profile Photo" value={profilePhotoUrl ? 'Uploaded' : 'Not uploaded'} />
+          </div>
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.24)]">
+          <div className="mb-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-600">Student Insights</p>
+            <h3 className="text-xl font-bold text-slate-900">Progress snapshot</h3>
+          </div>
+          <div className="grid gap-4 md:grid-cols-3">
+            {insights.cards.map((item) => {
+              const Icon = item.icon
+              return (
+                <div key={item.label} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm">
+                    <Icon size={18} className="text-slate-600" />
+                  </div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-400">{item.label}</p>
+                  <p className={`mt-2 text-2xl font-black ${item.tone}`}>{item.value}</p>
+                  <p className="mt-2 text-sm text-slate-600">{item.note}</p>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.24)]">
+          <div className="mb-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-600">Recommendations</p>
+            <h3 className="text-xl font-bold text-slate-900">Next best actions</h3>
+          </div>
+          <div className="space-y-3">
+            {insights.recommendations.map((item) => {
+              const Icon = item.icon
+              return (
+                <div key={item.title} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white shadow-sm">
+                      <Icon size={18} className="text-slate-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900">{item.title}</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-600">{item.description}</p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>

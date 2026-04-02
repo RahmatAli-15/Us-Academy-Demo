@@ -36,4 +36,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        value: https://sms-backend.onrender.com
+        value: https://sms-backend-xvrb.onrender.com

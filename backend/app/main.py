@@ -5,6 +5,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, Response
 from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
@@ -263,3 +264,12 @@ app.mount("/notice", StaticFiles(directory=str(notice_dir)), name="notice")
 async def health_check():
     """Health check endpoint."""
     return {"status": "ok"}
+
+
+@app.get("/favicon.ico")
+async def favicon():
+    """Serve a default favicon to prevent 404 errors."""
+    # Return a simple transparent 16x16 PNG as favicon
+    # This is a minimal 16x16 transparent PNG
+    favicon_data = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x10\x00\x00\x00\x10\x08\x06\x00\x00\x00\x1f\xf3\xff\x1f\x00\x00\x00\x01sRGB\x00\xae\xce\x1c\xe9\x00\x00\x00\x04gAMA\x00\x00\xb1\x8f\x0b\xfca\x05\x00\x00\x00\tpHYs\x00\x00\x0e\xc3\x00\x00\x0e\xc3\x01\xc7o\xa8d\x00\x00\x00\x0cIDATx\x9cc\xf8\x0f\x00\x00\x01\x00\x01\x00\x18\xdd\x8d\xb4\x00\x00\x00\x00IEND\xaeB`\x82'
+    return Response(content=favicon_data, media_type="image/png")

@@ -19,10 +19,11 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000,"
         "http://127.0.0.1:3001,"
         "http://localhost:5173,"
-        "http://127.0.0.1:5173"
+        "http://127.0.0.1:5173,"
+        "https://sms-frontend-s0pu.onrender.com"
     )
     CORS_ALLOW_ORIGIN_REGEX: str = (
-        r"https://.*\.(onrender\.com|ondigitalocean\.app)"
+        r"https://.*\.onrender\.com"
     )
     
     class Config:

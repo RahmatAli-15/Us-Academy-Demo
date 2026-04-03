@@ -119,7 +119,9 @@ def send_contact_email(name: str, sender_email: str, message: str) -> None:
     smtp_sender = settings.SMTP_FROM_EMAIL or settings.SMTP_USERNAME
     if not settings.SMTP_USERNAME or not settings.SMTP_PASSWORD or not smtp_sender:
         raise RuntimeError(
-            "SMTP is not configured. Set SMTP_USERNAME, SMTP_PASSWORD, and SMTP_FROM_EMAIL in backend/.env."
+            "SMTP is not configured. Please set the following environment variables: "
+            "SMTP_USERNAME, SMTP_PASSWORD, and optionally SMTP_FROM_EMAIL. "
+            "For Gmail, use an App Password for SMTP_PASSWORD."
         )
 
     email_message = EmailMessage()

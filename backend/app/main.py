@@ -123,6 +123,31 @@ def _ensure_student_columns() -> None:
             )
 
 
+def _ensure_admin_columns() -> None:
+    """Add OTP-related admin columns to existing databases."""
+    inspector = inspect(engine)
+    if "admins" not in inspector.get_table_names():
+        return
+
+    existing_columns = {column["name"] for column in inspector.get_columns("admins")}
+    admin_columns = {
+        "email": "VARCHAR(255)",
+        "email_otp_code": "VARCHAR(6)",
+        "email_otp_expires_at": "TIMESTAMP",
+        "email_otp_last_sent_at": "TIMESTAMP",
+        "email_otp_request_count": "INTEGER NOT NULL DEFAULT 0",
+        "email_otp_request_window_started_at": "TIMESTAMP",
+    }
+
+    with engine.begin() as conn:
+        for column_name, column_type in admin_columns.items():
+            if column_name in existing_columns:
+                continue
+            conn.execute(
+                text(f'ALTER TABLE admins ADD COLUMN "{column_name}" {column_type}')
+            )
+
+
 def _ensure_class_columns_are_text() -> None:
     """Convert class_ columns from integer to text before label normalization."""
     inspector = inspect(engine)
@@ -196,6 +221,7 @@ async def lifespan(app: FastAPI):
     """
     # Startup
     Base.metadata.create_all(bind=engine)
+    _ensure_admin_columns()
     _ensure_student_columns()
     _ensure_class_columns_are_text()
     _normalize_class_labels()

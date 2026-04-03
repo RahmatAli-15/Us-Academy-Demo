@@ -7,10 +7,18 @@ class Settings(BaseSettings):
     
     DATABASE_URL: str
     SECRET_KEY: str
+    ADMIN_OTP_EMAIL: str = "Usacademyofeducation@gmail.com"
     
     # JWT Settings
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    # Gmail SMTP settings for admin OTP
+    SMTP_HOST: str = "smtp.gmail.com"
+    SMTP_PORT: int = 587
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    SMTP_FROM_EMAIL: str = ""
 
     # CORS Settings
     CORS_ORIGINS: str = (

@@ -19,7 +19,7 @@ const PublicFooter = () => {
             </div>
             <div className="flex items-center gap-3">
               <Phone size={18} className="text-[#C6A75E]" />
-              <p>+91 9659000114</p>
+              <p>+91 9759000114 </p>
             </div>
             <div className="flex items-center gap-3">
               <Mail size={18} className="text-[#C6A75E]" />

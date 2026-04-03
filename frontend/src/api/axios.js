@@ -30,7 +30,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const token = localStorage.getItem('token')
+    const requestUrl = error.config?.url || ''
+    const isAuthRequest = requestUrl.startsWith('/auth/')
+
+    if (error.response?.status === 401 && token && !isAuthRequest) {
       // Token expired or invalid
       localStorage.removeItem('token')
       localStorage.removeItem('user')

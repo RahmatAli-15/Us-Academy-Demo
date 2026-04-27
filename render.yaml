@@ -10,6 +10,10 @@ services:
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    disks:
+      - name: sms-uploads
+        mountPath: /var/data/uploads
+        sizeGB: 1
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
@@ -23,6 +27,8 @@ services:
         value: HS256
       - key: ACCESS_TOKEN_EXPIRE_MINUTES
         value: "60"
+      - key: UPLOADS_DIR
+        value: /var/data/uploads
 
   - type: web
     name: sms-frontend

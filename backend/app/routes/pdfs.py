@@ -1,5 +1,4 @@
 """PDF management routes"""
-from pathlib import Path
 from typing import Optional
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
@@ -8,7 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_admin, get_current_user_optional
-from app.schemas.pdf import PdfCreate, PdfResponse, PdfUpdate
+from app.core.uploads import resolve_public_upload_path
+from app.schemas.pdf import PdfResponse, PdfUpdate
 from app.services.pdfs import (
     create_pdf,
     delete_pdf,
@@ -123,7 +123,7 @@ async def list_all_pdfs(
 
 @router.get("/download/{filename}")
 async def download_pdf(filename: str):
-    file_path = Path("uploads/notice") / filename
+    file_path = resolve_public_upload_path(f"uploads/notice/{filename}")
 
     if not file_path.exists():
         raise HTTPException(status_code=404, detail="File not found")

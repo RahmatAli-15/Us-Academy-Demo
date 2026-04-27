@@ -1,15 +1,15 @@
 """PDF management service"""
-import os
 from pathlib import Path
 from typing import List, Optional
 
 from sqlalchemy.orm import Session
 
+from app.core.uploads import get_uploads_dir, resolve_public_upload_path
 from app.models import PDF
 
 
 # Ensure uploads directory exists
-UPLOADS_DIR = Path(__file__).parent.parent.parent / "uploads"
+UPLOADS_DIR = get_uploads_dir()
 UPLOADS_DIR.mkdir(exist_ok=True)
 
 
@@ -198,7 +198,7 @@ def delete_pdf(db: Session, pdf_id: int) -> bool:
         return False
     
     # Delete file if it exists
-    file_path = UPLOADS_DIR.parent / pdf.file_path
+    file_path = resolve_public_upload_path(pdf.file_path)
     if file_path.exists():
         try:
             file_path.unlink()

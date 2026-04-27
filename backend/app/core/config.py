@@ -33,6 +33,9 @@ class Settings(BaseSettings):
     CORS_ALLOW_ORIGIN_REGEX: str = (
         r"https://.*\.onrender\.com"
     )
+
+    # Uploaded files. Keep empty locally to use backend/uploads.
+    UPLOADS_DIR: str = ""
     
     class Config:
         env_file = ".env"

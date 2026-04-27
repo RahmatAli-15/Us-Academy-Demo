@@ -1,6 +1,5 @@
 """FastAPI application entry point"""
 from contextlib import asynccontextmanager
-from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -11,6 +10,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.database import Base, SessionLocal, engine
+from app.core.uploads import get_uploads_dir
 from app.models import Admin, Attendance, Fees, PDF, Result, Student  # noqa: F401
 from app.routes.admin import router as admin_router
 from app.routes.attendance import router as attendance_router
@@ -273,9 +273,8 @@ app.include_router(student_router)
 app.include_router(public_router)
 app.include_router(test_router)
 
-# Serve uploaded files so frontend can download PDFs via /uploads/*
-# Keep this aligned with app.services.pdfs.UPLOADS_DIR (backend/uploads).
-uploads_dir = Path(__file__).resolve().parents[1] / "uploads"
+# Serve uploaded files so frontend can download PDFs and images via /uploads/*
+uploads_dir = get_uploads_dir()
 uploads_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=str(uploads_dir)), name="uploads")
 

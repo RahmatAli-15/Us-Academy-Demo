@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.core.dependencies import require_admin
+from app.core.uploads import get_uploads_dir, resolve_public_upload_path
 from app.enums.class_enum import is_valid_class_label
 from app.schemas.student import StudentCreate, StudentResponse, StudentUpdate
 from app.services.students import (
@@ -21,7 +22,7 @@ from app.services.students import (
 )
 
 router = APIRouter(prefix="/admin/students", tags=["admin"])
-STUDENT_PHOTO_DIR = Path(__file__).resolve().parents[2] / "uploads" / "students"
+STUDENT_PHOTO_DIR = get_uploads_dir() / "students"
 STUDENT_PHOTO_DIR.mkdir(parents=True, exist_ok=True)
 
 
@@ -231,7 +232,7 @@ async def upload_student_photo(
     updated_student = update_student(db, student_id, {"profile_photo_path": relative_path})
 
     if old_photo_path:
-        old_file = Path(__file__).resolve().parents[2] / old_photo_path
+        old_file = resolve_public_upload_path(old_photo_path)
         if old_file.exists():
             old_file.unlink(missing_ok=True)
 
